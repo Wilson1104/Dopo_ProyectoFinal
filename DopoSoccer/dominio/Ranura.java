@@ -1,7 +1,11 @@
 package dominio;
 
+import java.io.Serializable;
+
 /** Espacio de "nuevo juego": guarda las cuentas de los dos jugadores que juegan juntos. */
-public class Ranura {
+public class Ranura implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final int numero;
     private Cuenta[] cuentas;

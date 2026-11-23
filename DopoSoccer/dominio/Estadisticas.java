@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Estadísticas de una cuenta. Todas empiezan en 1 y suben hasta 10; cada nivel por encima de 1
  * suma un 10 % sobre el valor base. Comprar un nivel cuesta el doble que el anterior (500, 1000, 2000...).
  */
-public class Estadisticas {
+public class Estadisticas implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final int NIVEL_MAXIMO = 10;
     public static final int PRECIO_BASE = 500;

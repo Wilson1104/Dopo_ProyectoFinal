@@ -2,6 +2,7 @@ package presentacion;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -18,6 +19,7 @@ import javax.swing.SwingUtilities;
 
 import dominio.Cuenta;
 import dominio.DOPOSoccer;
+import dominio.ExcepcionDOPOSoccer;
 import dominio.Ranura;
 
 /**
@@ -34,6 +36,8 @@ class PanelNombres extends JPanel {
     private final DOPOSoccer soccer;
     private final JTextField nombre1 = campo();
     private final JTextField nombre2 = campo();
+    private final BotonJuego cargar = new BotonJuego("Cargar partida", BotonJuego.Tono.AZUL);
+    private final JLabel sinPartida = Estilo.etiqueta(ExcepcionDOPOSoccer.NO_HAY_PARTIDA, Font.PLAIN, 14);
 
     PanelNombres(DOPOSoccerGUI ventana, DOPOSoccer soccer) {
         super(new GridBagLayout());
@@ -49,6 +53,10 @@ class PanelNombres extends JPanel {
         BotonJuego continuar = new BotonJuego("Continuar", BotonJuego.Tono.VERDE);
         continuar.setPreferredSize(new Dimension(230, 58));
         continuar.addActionListener(e -> continuar());
+        cargar.setPreferredSize(new Dimension(230, 58));
+        cargar.addActionListener(e -> cargarPartida());
+        sinPartida.setForeground(Estilo.TEXTO_SUAVE);
+        sinPartida.setHorizontalAlignment(SwingConstants.CENTER);
         nombre1.addActionListener(e -> nombre2.requestFocusInWindow());
         nombre2.addActionListener(e -> continuar());
 
@@ -63,13 +71,23 @@ class PanelNombres extends JPanel {
         add(ayuda, c);
         fila(1, "Jugador 1", nombre1, 3);
         fila(2, "Jugador 2", nombre2, 4);
+        JPanel botones = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
+        botones.setOpaque(false);
+        botones.add(continuar);
+        botones.add(cargar);
         c.gridy = 5;
         c.insets = new Insets(28, 0, 0, 0);
-        add(continuar, c);
+        add(botones, c);
+        c.gridy = 6;
+        c.insets = new Insets(12, 0, 0, 0);
+        add(sinPartida, c);
     }
 
     /** Llena los campos con los nombres que ya había (al volver desde la preparación) y pone el foco en el primero. */
     void preparar() {
+        boolean hayPartida = DOPOSoccerGUI.ARCHIVO_PARTIDA.exists();
+        cargar.setEnabled(hayPartida);
+        sinPartida.setVisible(!hayPartida);
         try {
             Ranura ranura = soccer.getRanura(RANURA);
             if (!ranura.estaVacia()) {
@@ -83,6 +101,16 @@ class PanelNombres extends JPanel {
             nombre1.requestFocusInWindow();
             nombre1.selectAll();
         });
+    }
+
+    /** Abre la partida guardada y pasa directo a la preparación. */
+    private void cargarPartida() {
+        try {
+            soccer.abrir(DOPOSoccerGUI.ARCHIVO_PARTIDA);
+            ventana.mostrarConfiguracion();
+        } catch (Exception e) {
+            ventana.manejarError(e);
+        }
     }
 
     /**

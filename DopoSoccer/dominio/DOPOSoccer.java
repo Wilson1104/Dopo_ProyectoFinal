@@ -1,6 +1,11 @@
 package dominio;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Punto de entrada del dominio: la presentación solo habla con esta clase.
@@ -99,13 +104,30 @@ public class DOPOSoccer {
         getRanura(ranuraActual).getCuenta(jugador).comprarMejora(tipo);
     }
 
-    /** Guardar y abrir partidas corresponde a la versión dos (persistencia). */
+    /** Guarda las dos ranuras en el archivo. Si todavía no hay cuentas, no crea nada. */
     public void guardar(File archivo) throws ExcepcionDOPOSoccer {
-        throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.FUNCION_NO_DISPONIBLE);
+        if (ranuras[0].estaVacia() && ranuras[1].estaVacia()) return;
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(archivo))) {
+            salida.writeObject(ranuras);
+            salida.writeInt(ranuraActual);
+        } catch (IOException e) {
+            throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.ERROR_DE_ARCHIVO);
+        }
     }
 
+    /** Carga la partida guardada. Si el archivo falta o está dañado, el juego no cambia. */
     public void abrir(File archivo) throws ExcepcionDOPOSoccer {
-        throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.FUNCION_NO_DISPONIBLE);
+        if (!archivo.exists()) throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.NO_HAY_PARTIDA);
+        try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(archivo))) {
+            Ranura[] leidas = (Ranura[]) entrada.readObject();
+            int actual = entrada.readInt();
+            if (leidas == null || leidas.length != RANURAS) throw new IOException("Formato distinto");
+            System.arraycopy(leidas, 0, ranuras, 0, RANURAS);
+            ranuraActual = actual;
+            partido = null;
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.ERROR_DE_ARCHIVO);
+        }
     }
 
     public Partido getPartido() {

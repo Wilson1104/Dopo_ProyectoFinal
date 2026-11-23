@@ -3,6 +3,7 @@ package presentacion;
 import java.awt.CardLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,6 +29,8 @@ public class DOPOSoccerGUI extends JFrame {
     private static final String CONFIGURACION = "configuracion";
     private static final String ENFRENTAMIENTO = "enfrentamiento";
     private static final String JUEGO = "juego";
+    /** Dónde se guarda la partida: en la carpeta desde donde se ejecuta el juego. */
+    static final File ARCHIVO_PARTIDA = new File("partida-guardada.dat");
     private static final int ANCHO_MENU = 980;
     private static final int ALTO_MENU = 650;
 
@@ -109,6 +112,7 @@ public class DOPOSoccerGUI extends JFrame {
                    .append(" puntos (total ").append(jugador.getCuenta().getPuntos()).append(")\n");
         }
         JOptionPane.showMessageDialog(this, mensaje.toString(), "Fin del partido", JOptionPane.INFORMATION_MESSAGE);
+        guardarPartida();
         mostrarConfiguracion();
     }
 
@@ -124,11 +128,21 @@ public class DOPOSoccerGUI extends JFrame {
         }
     }
 
+    /** Guarda la partida sin preguntar. Si algo falla, se avisa y el juego sigue. */
+    void guardarPartida() {
+        try {
+            soccer.guardar(ARCHIVO_PARTIDA);
+        } catch (ExcepcionDOPOSoccer e) {
+            manejarError(e);
+        }
+    }
+
     private void salir() {
         if (panelJuego != null) panelJuego.pausarSiJuega();
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Seguro que quieres salir de DOPOSoccer?", "Salir",
             JOptionPane.YES_NO_OPTION);
         if (respuesta == JOptionPane.YES_OPTION) {
+            guardarPartida();
             dispose();
             System.exit(0);
         }

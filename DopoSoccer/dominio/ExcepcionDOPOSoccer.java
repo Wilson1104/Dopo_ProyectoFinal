@@ -21,6 +21,7 @@ public class ExcepcionDOPOSoccer extends Exception {
     public static final String SIN_PARTIDO = "No hay un partido en curso.";
     public static final String PARTIDO_EN_CURSO = "Las estadísticas solo se pueden mejorar antes de empezar un partido.";
     public static final String ERROR_DE_ARCHIVO = "No se pudo guardar o abrir la partida.";
+    public static final String NO_HAY_PARTIDA = "No hay ninguna partida guardada en este dispositivo.";
     public static final String FUNCION_NO_DISPONIBLE = "Esta función estará disponible en una próxima versión.";
 
     public ExcepcionDOPOSoccer(String mensaje) {

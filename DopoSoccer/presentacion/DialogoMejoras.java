@@ -68,7 +68,10 @@ class DialogoMejoras extends JDialog {
 
         BotonJuego cerrar = new BotonJuego("Cerrar", BotonJuego.Tono.AZUL);
         cerrar.setPreferredSize(new Dimension(150, 46));
-        cerrar.addActionListener(e -> dispose());
+        cerrar.addActionListener(e -> {
+            dispose();
+            ventana.guardarPartida();
+        });
         JPanel abajo = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         abajo.setOpaque(false);
         abajo.add(cerrar);

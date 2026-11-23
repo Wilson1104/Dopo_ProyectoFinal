@@ -1,7 +1,11 @@
 package dominio;
 
+import java.io.Serializable;
+
 /** Progreso de un jugador: su nombre, los puntos acumulados y sus estadísticas. */
-public class Cuenta {
+public class Cuenta implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String nombre;
     private int puntos;
