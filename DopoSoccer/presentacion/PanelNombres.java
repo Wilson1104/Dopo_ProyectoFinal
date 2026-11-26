@@ -54,7 +54,7 @@ class PanelNombres extends JPanel {
         continuar.setPreferredSize(new Dimension(230, 58));
         continuar.addActionListener(e -> continuar());
         cargar.setPreferredSize(new Dimension(230, 58));
-        cargar.addActionListener(e -> cargarPartida());
+        cargar.addActionListener(e -> ventana.cargarPartidaGuardada());
         sinPartida.setForeground(Estilo.TEXTO_SUAVE);
         sinPartida.setHorizontalAlignment(SwingConstants.CENTER);
         nombre1.addActionListener(e -> nombre2.requestFocusInWindow());
@@ -101,16 +101,6 @@ class PanelNombres extends JPanel {
             nombre1.requestFocusInWindow();
             nombre1.selectAll();
         });
-    }
-
-    /** Abre la partida guardada y pasa directo a la preparación. */
-    private void cargarPartida() {
-        try {
-            soccer.abrir(DOPOSoccerGUI.ARCHIVO_PARTIDA);
-            ventana.mostrarConfiguracion();
-        } catch (Exception e) {
-            ventana.manejarError(e);
-        }
     }
 
     /**

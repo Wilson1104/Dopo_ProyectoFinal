@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Todo lo que se mueve en la cancha (jugadores y balones): posición, velocidad, tamaño y gravedad.
  * Las coordenadas crecen hacia la derecha (x) y hacia abajo (y).
  */
-public abstract class ElementoMovil {
+public abstract class ElementoMovil implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** Aceleración hacia abajo, en unidades de cancha por segundo al cuadrado. */
     public static final double GRAVEDAD = 900;

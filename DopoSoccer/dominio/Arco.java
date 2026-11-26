@@ -1,7 +1,11 @@
 package dominio;
 
+import java.io.Serializable;
+
 /** Arco de un lado de la cancha. Su travesaño es la parte de arriba, donde rebotan el balón y los jugadores. */
-public class Arco {
+public class Arco implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final double GROSOR_TRAVESANO = 6;
 

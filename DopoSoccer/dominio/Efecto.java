@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Efecto temporal que sufre un jugador. Por defecto no restringe nada; cada efecto concreto
  * dice qué impide y qué le pasa al empezar o al terminar.
  */
-public abstract class Efecto {
+public abstract class Efecto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final double duracion;
     private double tiempoRestante;

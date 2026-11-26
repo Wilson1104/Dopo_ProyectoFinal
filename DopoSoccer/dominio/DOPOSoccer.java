@@ -1,5 +1,6 @@
 package dominio;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -104,30 +105,48 @@ public class DOPOSoccer {
         getRanura(ranuraActual).getCuenta(jugador).comprarMejora(tipo);
     }
 
-    /** Guarda las dos ranuras en el archivo. Si todavía no hay cuentas, no crea nada. */
+    /** Guarda las dos ranuras y, si hay un partido sin terminar, también ese partido. Sin cuentas no crea nada. */
     public void guardar(File archivo) throws ExcepcionDOPOSoccer {
         if (ranuras[0].estaVacia() && ranuras[1].estaVacia()) return;
+        Partido enCurso = partido != null && !partido.isTerminado() ? partido : null;
         try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(archivo))) {
             salida.writeObject(ranuras);
             salida.writeInt(ranuraActual);
+            salida.writeObject(enCurso);
         } catch (IOException e) {
             throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.ERROR_DE_ARCHIVO);
         }
     }
 
-    /** Carga la partida guardada. Si el archivo falta o está dañado, el juego no cambia. */
+    /**
+     * Carga la partida guardada. Si había un partido a medias, queda en pausa para que la persona decida cuándo seguir.
+     * Si el archivo falta o está dañado, el juego no cambia.
+     */
     public void abrir(File archivo) throws ExcepcionDOPOSoccer {
         if (!archivo.exists()) throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.NO_HAY_PARTIDA);
         try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(archivo))) {
             Ranura[] leidas = (Ranura[]) entrada.readObject();
             int actual = entrada.readInt();
+            Partido enCurso = leerPartido(entrada);
             if (leidas == null || leidas.length != RANURAS) throw new IOException("Formato distinto");
             System.arraycopy(leidas, 0, ranuras, 0, RANURAS);
             ranuraActual = actual;
-            partido = null;
+            partido = enCurso;
+            if (partido != null) partido.pausar();
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             throw new ExcepcionDOPOSoccer(ExcepcionDOPOSoccer.ERROR_DE_ARCHIVO);
         }
+    }
+
+    /** Perfil de la máquina del partido en curso (Torpe, Ofensiva...), o null si el rival es otra persona. */
+    public String getPerfilMaquina() {
+        if (partido == null) return null;
+        Jugador rival = partido.getJugador(2);
+        if (rival instanceof MaquinaTorpe) return "Torpe";
+        if (rival instanceof MaquinaOfensiva) return "Ofensiva";
+        if (rival instanceof MaquinaDefensiva) return "Defensiva";
+        if (rival instanceof MaquinaExperta) return "Experta";
+        return null;
     }
 
     public Partido getPartido() {
@@ -142,6 +161,15 @@ public class DOPOSoccer {
 
     public int getRanuraActual() {
         return ranuraActual;
+    }
+
+    /** Las partidas guardadas antes de agregar el partido no traen esa parte: en ese caso se devuelve null. */
+    private static Partido leerPartido(ObjectInputStream entrada) throws IOException, ClassNotFoundException {
+        try {
+            return (Partido) entrada.readObject();
+        } catch (EOFException e) {
+            return null;
+        }
     }
 
     private Partido partidoEnCurso() throws ExcepcionDOPOSoccer {

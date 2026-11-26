@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Campo de juego de ANCHO x ALTO unidades con un arco en cada lado. La resolución solo dice
  * de qué tamaño se dibuja en pantalla.
  */
-public class Cancha {
+public class Cancha implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final double ANCHO = 800;
     public static final double ALTO = 450;

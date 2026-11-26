@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Personaje que representa a un país. Los personajes solo se diferencian por su país y su tiro de poder;
  * para agregar uno nuevo basta con crear su TiroDePoder y registrarlo en {@link #crear(String)}.
  */
-public class Personaje {
+public class Personaje implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String COREA_DEL_SUR = "Corea del Sur";
     public static final String CAMERUN = "Camerún";

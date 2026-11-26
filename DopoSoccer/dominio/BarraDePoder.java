@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Barra de poder: se llena sola en 10 segundos y sube un cuarto cuando el jugador recibe un gol.
  * La carga va de 0 (vacía) a 1 (llena).
  */
-public class BarraDePoder {
+public class BarraDePoder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final double TIEMPO_DE_LLENADO = 10;
 

@@ -1,5 +1,6 @@
 package dominio;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,9 @@ import java.util.List;
  * Un partido de dos jugadores. Cada subclase define cuándo termina (por tiempo o por goles).
  * {@link #actualizar(double)} avanza el juego un instante: es el ciclo que llama la presentación.
  */
-public abstract class Partido {
+public abstract class Partido implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final int PUNTOS_GANADOR = 100;
     public static final int PUNTOS_PERDEDOR = 25;

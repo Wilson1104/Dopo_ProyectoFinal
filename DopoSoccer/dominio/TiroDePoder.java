@@ -1,10 +1,14 @@
 package dominio;
 
+import java.io.Serializable;
+
 /**
  * Tiro de poder de un personaje. Cada tiro define cómo sale el balón ({@link #lanzar}) y qué efecto
  * le causa al rival si lo golpea ({@link #crearEfecto}).
  */
-public abstract class TiroDePoder {
+public abstract class TiroDePoder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String nombre;
     private final int danioBase;

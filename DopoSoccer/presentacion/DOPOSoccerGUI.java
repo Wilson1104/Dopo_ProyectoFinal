@@ -137,6 +137,22 @@ public class DOPOSoccerGUI extends JFrame {
         }
     }
 
+    /** Carga la partida guardada. Si había un partido a medias, vuelve a la cancha en pausa; si no, a la configuración. */
+    void cargarPartidaGuardada() {
+        try {
+            soccer.abrir(ARCHIVO_PARTIDA);
+            Partido partido = soccer.getPartido();
+            if (partido == null) {
+                mostrarConfiguracion();
+            } else {
+                String perfil = soccer.getPerfilMaquina();
+                mostrarJuego(partido.getCancha().getResolucion(), perfil != null, perfil);
+            }
+        } catch (Exception e) {
+            manejarError(e);
+        }
+    }
+
     private void salir() {
         if (panelJuego != null) panelJuego.pausarSiJuega();
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Seguro que quieres salir de DOPOSoccer?", "Salir",
